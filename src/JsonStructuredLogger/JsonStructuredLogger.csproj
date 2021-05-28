@@ -1,6 +1,6 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
     <Version>0.1.2</Version>
     <PackageDescription>Json Structured Logger for Microsoft.Extensions.Logging provides a way to persist log messages in form of JSON-formatted entries. 
     The logger persists all properties (state) and scope properties as JSON objects</PackageDescription>
