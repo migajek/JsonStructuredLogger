@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace JsonStructuredLogger
 {
-    public sealed class JsonLogEntry
+    public class JsonLogEntry
     {
         public DateTimeOffset Timestamp { get; set; }
         public int LogLevel { get; set; }

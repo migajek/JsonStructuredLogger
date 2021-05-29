@@ -1,15 +1,15 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>net5.0;netcoreapp3.1</TargetFrameworks>
-    <Version>0.1.4</Version>
+    <Version>0.1.5</Version>
     <PackageDescription>Json Structured Logger for Microsoft.Extensions.Logging provides a way to persist log messages in form of JSON-formatted entries. 
   The logger persists all properties (state) and scope properties as JSON objects</PackageDescription>
     <PackageProjectUrl>https://github.com/migajek/JsonStructuredLogger</PackageProjectUrl>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.1.0"  Condition="'$(TargetFramework)' == 'netcoreapp3.1'"/>
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0"  Condition="'$(TargetFramework)' == 'net5.0'"/>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="3.1.0"  Condition="'$(TargetFramework)' == 'netcoreapp3.1'"/>
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="5.0.0"  Condition="'$(TargetFramework)' == 'net5.0'"/>
   </ItemGroup>
 
 </Project>

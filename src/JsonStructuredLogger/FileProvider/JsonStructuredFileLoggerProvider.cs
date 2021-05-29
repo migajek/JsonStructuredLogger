@@ -1,11 +1,11 @@
 using System;
 using System.IO;
 
-namespace JsonStructuredLogger.File
+namespace JsonStructuredLogger.FileProvider
 {
     public class JsonStructuredFileLoggerProvider : JsonStructuredLoggerProvider
     {
-        private JsonStructuredFileLoggerOptions _options;
+        private readonly JsonStructuredFileLoggerOptions _options;
 
         public JsonStructuredFileLoggerProvider(JsonStructuredFileLoggerOptions options)
         {
