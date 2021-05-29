@@ -7,16 +7,17 @@ using System.Reflection;
 
 namespace JsonStructuredLogger.Infrastructure
 {
+    // https://www.meziantou.net/asp-net-core-json-logger.htm
     internal static class ExpressionCache
     {
         public delegate void AppendToDictionary(IDictionary<string, object> dictionary, object o);
 
-        private static readonly ConcurrentDictionary<Type, AppendToDictionary> s_typeCache = new ConcurrentDictionary<Type, AppendToDictionary>();
-        private static readonly PropertyInfo _dictionaryIndexerProperty = GetDictionaryIndexer();
+        private static readonly ConcurrentDictionary<Type, AppendToDictionary> STypeCache = new ConcurrentDictionary<Type, AppendToDictionary>();
+        private static readonly PropertyInfo DictionaryIndexerProperty = GetDictionaryIndexer();
 
         public static AppendToDictionary GetOrCreateAppendToDictionaryMethod(Type type)
         {
-            return s_typeCache.GetOrAdd(type, t => CreateAppendToDictionaryMethod(t));
+            return STypeCache.GetOrAdd(type, t => CreateAppendToDictionaryMethod(t));
         }
 
         private static AppendToDictionary CreateAppendToDictionaryMethod(Type type)
@@ -32,7 +33,7 @@ namespace JsonStructuredLogger.Infrastructure
             var setters =
                 from prop in properties
                 where prop.CanRead
-                let indexerExpression = Expression.Property(dictionaryParameter, _dictionaryIndexerProperty, Expression.Constant(prop.Name))
+                let indexerExpression = Expression.Property(dictionaryParameter, DictionaryIndexerProperty, Expression.Constant(prop.Name))
                 let getExpression = Expression.Property(castedParameter, prop.GetMethod)
                 select Expression.Assign(indexerExpression, getExpression);
 

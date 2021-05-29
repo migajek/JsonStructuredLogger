@@ -7,6 +7,8 @@ using Microsoft.Extensions.Logging;
 
 namespace JsonStructuredLogger
 {
+
+    // https://www.meziantou.net/asp-net-core-json-logger.htm
     internal class JsonStructuredLogger : ILogger
     {
         public delegate void EntryWriter(JsonLogEntry entry, string serialized);
@@ -63,35 +65,34 @@ namespace JsonStructuredLogger
 
         private void FillStateProperties(IDictionary<string, object> dictionary, object scope)
         {
-            if (scope == null)
-                return;
-
-            // The scope can be defined using BeginScope or LogXXX methods.
-            // - logger.BeginScope(new { Author = "meziantou" })
-            // - logger.LogInformation("Hello {Author}", "meziaantou")
-            // Using LogXXX, an object of type FormattedLogValues is created. This type is internal but it implements IReadOnlyList, so we can use it.
-            // https://github.com/aspnet/Extensions/blob/cc9a033c6a8a4470984a4cc8395e42b887c07c2e/src/Logging/Logging.Abstractions/src/FormattedLogValues.cs
-            if (scope is IReadOnlyList<KeyValuePair<string, object>> formattedLogValues)
+            switch (scope)
             {
-                if (formattedLogValues.Count > 0)
+                case null:
+                    return;
+
+                case IReadOnlyList<KeyValuePair<string, object>> formattedLogValues:
                 {
                     foreach (var value in formattedLogValues)
                     {
-                        // MethodInfo is set by ASP.NET Core when reaching a controller. This type cannot be serialized using JSON.NET, but I don't need it.
                         if (value.Value is MethodInfo methodInfo)
                         {
                             dictionary[value.Key] = methodInfo.Name;
-                            continue;
                         }
-
-                        dictionary[value.Key] = value.Value;
+                        else
+                        {
+                            dictionary[value.Key] = value.Value;
+                        }
                     }
+
+                    break;
                 }
-            }
-            else
-            {
-                var appendToDictionaryMethod = ExpressionCache.GetOrCreateAppendToDictionaryMethod(scope.GetType());
-                appendToDictionaryMethod(dictionary, scope);
+
+                default:
+                {
+                    var appendToDictionaryMethod = ExpressionCache.GetOrCreateAppendToDictionaryMethod(scope.GetType());
+                    appendToDictionaryMethod(dictionary, scope);
+                    break;
+                }
             }
         }
     }
