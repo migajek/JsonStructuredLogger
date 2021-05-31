@@ -35,7 +35,8 @@ namespace JsonStructuredLogger.Infrastructure
                 where prop.CanRead
                 let indexerExpression = Expression.Property(dictionaryParameter, DictionaryIndexerProperty, Expression.Constant(prop.Name))
                 let getExpression = Expression.Property(castedParameter, prop.GetMethod)
-                select Expression.Assign(indexerExpression, getExpression);
+                let convertExpr = Expression.Convert(getExpression, typeof(object))
+                select Expression.Assign(indexerExpression, convertExpr);
 
             var body = new List<Expression>(properties.Length + 1);
             body.Add(castedParameter);

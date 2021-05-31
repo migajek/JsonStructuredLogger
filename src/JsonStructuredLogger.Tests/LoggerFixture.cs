@@ -1,7 +1,8 @@
-using Microsoft.Extensions.Logging;
 using System.Linq;
+using JsonStructuredLogger.Tests.Infrastructure;
+using Microsoft.Extensions.Logging;
 
-namespace JsonStructuredLogger
+namespace JsonStructuredLogger.Tests
 {
     internal class LoggerFixture
     {

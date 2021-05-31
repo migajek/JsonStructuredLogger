@@ -1,9 +1,10 @@
 using System;
-using Xunit;
-using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 using System.Linq;
+using Microsoft.Extensions.Logging;
+using Xunit;
 
-namespace JsonStructuredLogger
+namespace JsonStructuredLogger.Tests
 {
     public class JsonStructuredLoggerTests
     {
@@ -57,7 +58,6 @@ namespace JsonStructuredLogger
             // assert
             Assert.Single(fixture.LogEntries);
             var logEntry = fixture.LogEntries.Single();
-            Console.WriteLine(String.Join(", ", logEntry.Properties.Keys));
             Assert.Equal("0xdeadbeef", logEntry.Properties["CorrelationId"]);
         }
 
@@ -76,9 +76,40 @@ namespace JsonStructuredLogger
             // assert
             Assert.Single(fixture.LogEntries);
             var logEntry = fixture.LogEntries.Single();
-            Console.WriteLine(String.Join(", ", logEntry.Properties.Keys));
+        
             Assert.Equal("0xdeadbeef", logEntry.Properties["CorrelationId"]);
             Assert.Equal("Token", logEntry.Properties["AuthInfo"]);
+        }
+
+        [Fact]
+        public void Can_Handle_Complex_Scope_Object()
+        {
+            // arrange
+            var fixture = new LoggerFixture();
+            var logger = fixture.CreateLogger<JsonStructuredLoggerTests>();
+
+            // act
+            var scopeInfo = new
+            {
+                Int32 = 27,
+                String = "Str",
+                Dictionary = new Dictionary<string, object>()
+                {
+                    ["request"] = new
+                    {
+                        RequestId = Guid.NewGuid(),
+                        UserId = 99
+                    }
+                }
+            };
+            using var scope = logger.BeginScope(scopeInfo);
+            logger.LogInformation("foo");
+            
+            // assert
+            Assert.Single(fixture.LogEntries);
+            var entry = fixture.LogEntries.Single();
+
+            Assert.Contains("Dictionary", entry.Properties);
         }
     }
 }
