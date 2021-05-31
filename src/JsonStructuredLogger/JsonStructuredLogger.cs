@@ -64,9 +64,10 @@ namespace JsonStructuredLogger
             {
                 return JsonSerializer.Serialize(message);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 message.Properties.Clear();
+                message.Properties["__serialization_exception"] = ex.Message;
                 return JsonSerializer.Serialize(message);
             }
         }

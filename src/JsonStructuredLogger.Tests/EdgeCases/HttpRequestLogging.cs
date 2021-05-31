@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using System.Linq;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Internal;
 using Microsoft.Extensions.Logging;
 using Xunit;
@@ -15,11 +16,12 @@ namespace JsonStructuredLogger.Tests.EdgeCases
             var logger = fixture.CreateLogger<JsonStructuredLoggerTests>();
 
             // act
-            logger.LogInformation("Processing {Request}", new DefaultHttpRequest(new DefaultHttpContext()));
+            var request = new DefaultHttpRequest(new DefaultHttpContext());
+            logger.LogInformation("Processing {Request}", request);
 
             // assert
             Assert.Single(fixture.LogEntries);
-
+            Assert.Contains("__serialization_exception", fixture.LogEntries.Single().Properties.Keys);
         }
     }
 }
