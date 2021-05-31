@@ -4,7 +4,7 @@ namespace JsonStructuredLogger.Tests.Infrastructure
 {
     public class JsonTestLoggerProvider : JsonStructuredLoggerProvider
     {
-        private List<JsonLogEntry> _logEntries = new List<JsonLogEntry>();
+        private readonly List<JsonLogEntry> _logEntries = new List<JsonLogEntry>();
         public IReadOnlyCollection<JsonLogEntry> LogEntries { get; }
         public JsonTestLoggerProvider()
         {

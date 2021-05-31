@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,6 +23,21 @@ namespace JsonStructuredLogger.Infrastructure
 
         private static AppendToDictionary CreateAppendToDictionaryMethod(Type type)
         {
+            if (typeof(IDictionary).IsAssignableFrom(type))
+            {
+                return (dictionary, obj) =>
+                {
+                    var dict = obj as IDictionary;
+                    foreach (DictionaryEntry dictionaryEntry in dict)
+                    {
+                        var key = dictionaryEntry.Key.ToString();
+                        if (key != null)
+                        {
+                            dictionary[key] = dictionaryEntry.Value;
+                        }
+                    }
+                };
+            }
             var dictionaryParameter = Expression.Parameter(typeof(IDictionary<string, object>), "dictionary");
             var objectParameter = Expression.Parameter(typeof(object), "o");
 
@@ -33,13 +49,13 @@ namespace JsonStructuredLogger.Infrastructure
             var setters =
                 from prop in properties
                 where prop.CanRead
+                where !prop.GetIndexParameters().Any()
                 let indexerExpression = Expression.Property(dictionaryParameter, DictionaryIndexerProperty, Expression.Constant(prop.Name))
                 let getExpression = Expression.Property(castedParameter, prop.GetMethod)
                 let convertExpr = Expression.Convert(getExpression, typeof(object))
                 select Expression.Assign(indexerExpression, convertExpr);
 
-            var body = new List<Expression>(properties.Length + 1);
-            body.Add(castedParameter);
+            var body = new List<Expression>(properties.Length + 1) {castedParameter};
             body.AddRange(setters);
 
             var lambdaExpression = Expression.Lambda<AppendToDictionary>(Expression.Block(body), dictionaryParameter, objectParameter);
