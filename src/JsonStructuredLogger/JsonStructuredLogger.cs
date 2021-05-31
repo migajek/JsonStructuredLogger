@@ -55,7 +55,20 @@ namespace JsonStructuredLogger
             FillStateProperties(message.Properties, state);
             FillExternalScopeProperties(message.Properties);
 
-            _entryWriter(message, JsonSerializer.Serialize(message));
+            _entryWriter(message, Serialize(message));
+        }
+
+        private string Serialize(JsonLogEntry message)
+        {
+            try
+            {
+                return JsonSerializer.Serialize(message);
+            }
+            catch (Exception)
+            {
+                message.Properties.Clear();
+                return JsonSerializer.Serialize(message);
+            }
         }
 
         private void FillExternalScopeProperties(IDictionary<string, object> dictionary)
